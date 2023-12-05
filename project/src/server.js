@@ -1,6 +1,6 @@
 const express = require('express')()
 const {randomGiveawayFunction} = require('./giveaway')
-const SENDGRID = require('./sendGrid')
+const {sendGrid} = require('./sendGrid')
 
 
 const cors = require('cors')
@@ -13,13 +13,13 @@ express.post('/new-year/giveaway', async (req, res) => {
     try {
         const data = randomGiveawayFunction(req.body.array);
         for (let user of data) {
-            let giverUserName = user.giver.name
+            let giverUserName = user.giver.name.toLocaleUpperCase()
             let giverUserMail = user.giver.email
-            let receiverUserName = user.receiver.name
+            let receiverUserName = user.receiver.name.toLocaleUpperCase()
             let receiverUserMail = user.receiver.email
 
             const emailMessage = `Congratulations ${giverUserName}! You will start the new year by making ${receiverUserName} happy with your gift. Here is the contact email ${receiverUserMail}`
-            await SENDGRID('give-away', giverUserMail, emailMessage)
+            await sendGrid('give-away', giverUserMail, emailMessage)
         }
 
         res.status(200).json(data);

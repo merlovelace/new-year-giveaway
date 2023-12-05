@@ -1,24 +1,30 @@
 const client = require('@sendgrid/mail')
-client.setApiKey("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")
+require('dotenv').config()
 
-const sendGrid = async (type, email, text) => {
-    let options = {
+client.setApiKey(process.env.SEND_GRID_KEY)
+exports.sendGrid = async (type, email, text) => {
+    const msg = {
         to: email,
-        from: 'NEW YEAR GIVE AWAY 🥂🎄🥳',
+        from: {
+            name: 'NEW YEAR GIVE AWAY 🥂🎄🥳',
+            email: process.env.GMAIL
+        },
+        subject: 'Sending New Year Give Away',
         templateId: '',
         dynamicTemplateData: {}
-    }
+    };
 
-    if(type === 'give-away') {
-        options.templateId = 'd95b6232-d759-4a83-976c-340875cf98b3'
-        options.dynamicTemplateData = {
+    if(type === 'giveaway'){
+        msg.templateId =  'd-dccf8e53b3db4db7b16fff75a1c9a73a'
+        msg.dynamicTemplateData = {
             text: text
         }
-    }
 
-    console.log(options)
-    return client.send(options).then(r => { console.log('E-Posta Gönderildi!') }).catch(e => { console.log(e) })
+    }
+    console.log(msg);
+    return client.send(msg)
+        .then(r => { console.log('E-Posta sent!') })
+        .catch(e => { console.error(e) });
 }
 
 
-module.exports = sendGrid
